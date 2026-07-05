@@ -24,6 +24,7 @@ func GenerateToken(userID uuid.UUID, orgID uuid.UUID, role string, expiryMin int
 		OrganizationID: orgID,
 		Role:           role,
 		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        uuid.New().String(),
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
