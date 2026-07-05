@@ -59,9 +59,9 @@ func (s *AuthService) Register(username, email, password string, orgID uuid.UUID
 }
 
 type LoginResult struct {
-	User         *model.User
-	AccessToken  string
-	RefreshToken string
+	User         *model.User `json:"user"`
+	AccessToken  string      `json:"access_token"`
+	RefreshToken string      `json:"refresh_token"`
 }
 
 func (s *AuthService) Login(username, password, ipAddress, userAgent string) (*LoginResult, error) {
