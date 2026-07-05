@@ -20,8 +20,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const cachedUser = localStorage.getItem("user");
     const token = localStorage.getItem("accessToken");
 
-    if (cachedUser && token) {
-      setUser(JSON.parse(cachedUser));
+    if (cachedUser && token && cachedUser !== "undefined") {
+      try {
+        setUser(JSON.parse(cachedUser));
+      } catch (err) {
+        console.error("Failed to parse cached user", err);
+        localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
+      }
     }
     setLoading(false);
   }, []);
