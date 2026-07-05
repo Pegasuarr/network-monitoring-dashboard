@@ -1,8 +1,10 @@
 package configs
 
 import (
+	"bufio"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type Config struct {
@@ -23,6 +25,8 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
+	loadEnvFile(".env")
+
 	return &Config{
 		Port:           getEnv("PORT", "8080"),
 		DBHost:         getEnv("DB_HOST", "localhost"),
@@ -58,4 +62,30 @@ func getEnvAsInt(key string, defaultVal int) int {
 		return defaultVal
 	}
 	return val
+}
+
+func loadEnvFile(filename string) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return // Silently skip if no .env file exists
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) == 2 {
+			key := strings.TrimSpace(parts[0])
+			val := strings.TrimSpace(parts[1])
+			// Strip surrounding quotes
+			val = strings.Trim(val, `"'`)
+			os.Setenv(key, val)
+		}
+	}
 }
