@@ -28,7 +28,10 @@ func InitDB(cfg *configs.Config) (*gorm.DB, error) {
 
 	// Retry database connection a few times for docker startup
 	for i := 0; i < 5; i++ {
-		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		db, err = gorm.Open(postgres.New(postgres.Config{
+			DSN:                  dsn,
+			PreferSimpleProtocol: true,
+		}), &gorm.Config{})
 		if err == nil {
 			break
 		}
